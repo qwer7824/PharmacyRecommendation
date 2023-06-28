@@ -53,7 +53,6 @@ public class PharmacyRepositoryService {
     }
 
     // self invocation test
-    @Transactional
     public void foo(List<Pharmacy> pharmacyList) {
         log.info("foo CurrentTransactionName: "+ TransactionSynchronizationManager.getCurrentTransactionName());
         pharmacyList.forEach(pharmacy -> {
