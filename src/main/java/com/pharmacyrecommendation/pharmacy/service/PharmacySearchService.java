@@ -1,5 +1,6 @@
 package com.pharmacyrecommendation.pharmacy.service;
 
+import com.pharmacyrecommendation.pharmacy.cache.PharmacyRedisTemplateService;
 import com.pharmacyrecommendation.pharmacy.dto.PharmacyDto;
 import com.pharmacyrecommendation.pharmacy.entity.Pharmacy;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,16 @@ import java.util.stream.Collectors;
 public class PharmacySearchService {
 
     private final PharmacyRepositoryService pharmacyRepositoryService;
+    private final PharmacyRedisTemplateService pharmacyRedisTemplateService;
 
-    public List<PharmacyDto> searchPharmacyDtoList(){
+    public List<PharmacyDto> searchPharmacyDtoList(){ // redis 에서 먼저 조회를 한 후 에러가 나면 db로 다시 조회
+
+        //redis
+        List<PharmacyDto> pharmacyDtoList = pharmacyRedisTemplateService.findAll();
+        if(!pharmacyDtoList.isEmpty()) return pharmacyDtoList;
 
 
+        //db
        return pharmacyRepositoryService.findAll()
                .stream()
                .map(this::convertToPharmacyDto)
